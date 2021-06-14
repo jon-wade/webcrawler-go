@@ -25,7 +25,7 @@ func traverse(url string, n *html.Node, resultSlice *[]string, mutex *sync.Mutex
 	if n.Type == html.ElementNode && n.Data == "a" {
 		// ...and extracts their href values
 		var urlStr = n.Attr[0].Val
-		if strings.Contains(urlStr, "http") && !strings.Contains(urlStr, "mailto:") && strings.Contains(urlStr, url) {
+		if strings.Contains(urlStr, "http") && strings.Contains(urlStr, url) {
 			fmt.Println(urlStr)
 			// we only want to write to the slice if it doesn't already contain this value, so we don't end up in an infinite loop
 			if !sliceContains(*resultSlice, urlStr) {
@@ -63,8 +63,9 @@ func parsePage(url string, resultSlice *[]string, mutex *sync.Mutex) {
 }
 
 func main() {
+	args := os.Args[1:]
 	var resultSlice []string
 	var mutex = sync.Mutex{}
-	parsePage("https://thebotplatform.com", &resultSlice, &mutex)
+	parsePage(args[0], &resultSlice, &mutex)
 	fmt.Printf("\n\n%+v\n", resultSlice)
 }
